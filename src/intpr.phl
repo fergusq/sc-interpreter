@@ -14,7 +14,7 @@ module.onload [
 	/* stack manipulation */
 	commands["pop"] = #(env) [ env.pop(); ]; /* a -- */
 	commands["dup"] = #(env) [ env.dup(); ]; /* a -- a a*/
-	commands["dupt"] = #(env) [ env.dupt(); ]; /* .. index_a -- a ..*/
+	commands["dupt"] = #(env) [ env.dupt(); ]; /* .. a index_a -- a ..*/
 	commands["overf"] = #(env) [ env.overf(); ]; /* a .. index_a -- a .. a*/
 	commands["swap"] = #(env) [ env.swap(); ]; /* a b -- b a */
 	

@@ -48,7 +48,47 @@ Manually: TODO
 
 ### Functions
 
-TODO
+```
+nop ( -- )
+pop ( a -- )
+dup ( a -- a a )
+dupt ( .. index_a a -- a .. ) moves a number to a position in the stack
+overf ( a .. index_a -- a .. a ) brings a number from a position of the stack
+swap ( a b -- b a )
+	
+pushp ( .. p addr psize -- .. p )( new stack: -- p ) jump to addr, create new stack frame
+popr ( .. r -- ) (old stack: .. -- .. r ) jump back, exit stack frame
+	
+memory manipulation
+printm ( out -- ) writes to heap
+readm ( addr -- in ) reads from heap
+	
+control
+goto ( to -- ) jumps to a locations
+if ( cond to -- ) conditional jump
+	
+math
+add ( a b -- a+b )
+mul ( a b -- a*b )
+sub ( a b -- a-b )
+div ( a b -- a/b )
+	
+logic
+eq ( a b -- a=b )
+gt ( a b -- a>b )
+lt ( a b -- a<b )
+and ( a b -- a&b )
+or ( a b -- a|b )
+xor ( a b -- a^b )
+not ( a -- !a )
+	
+io
+print ( out -- ) print a number
+printc ( out -- ) print a character
+read ( -- in ) read a number
+readc ( -- in ) read a character
+]
+```
 
 ### Comments
 
