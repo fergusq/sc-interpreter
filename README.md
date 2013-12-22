@@ -7,7 +7,7 @@ SC Interpreter
 
 **These instructions are for Linux**
 
-To build sc-pp, you need phl environment. Using installation script is the recommended way.
+To build sc-interpreter, you need phl environment. Using installation script is the recommended way.
 
 ### Installing PHL environment
 
