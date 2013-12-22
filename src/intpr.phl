@@ -1,0 +1,71 @@
+module intpr;
+
+import phl::lang::collections;
+import phl::lang::io;
+import env;
+import lex;
+
+static @Hashtable<@Closure<@Void, @Environment> > commands;
+
+module.onload [
+	commands = new @Hashtable<@Closure<@Void, @Environment> >;
+	commands["nop"] = #(env) [];
+	
+	/* stack manipulation */
+	commands["pop"] = #(env) [ env.pop(); ]; /* a -- */
+	commands["dup"] = #(env) [ env.dup(); ]; /* a -- a a*/
+	commands["dupt"] = #(env) [ env.dupt(); ]; /* .. index_a -- a ..*/
+	commands["overf"] = #(env) [ env.overf(); ]; /* a .. index_a -- a .. a*/
+	commands["swap"] = #(env) [ env.swap(); ]; /* a b -- b a */
+	
+	commands["pushp"] = #(env) [ var psize = env.pop(); var to_ip = env.pop(); env.pushp(psize, to_ip); ]; /* .. p addr psize -- .. p ( -> uusi pino: -- p ) */
+	commands["popr"] = #(env) [ env.popr(); ]; /* .. r -- ( --> vanha pino: .. -- .. r )*/
+	
+	/* memory manipulation */
+	commands["printm"] = #(env) [ var tmp = env.pop(); env::memory[tmp] = env.pop(); ]; /* out -- */
+	commands["readm"] = #(env) [ env.push(env::memory[env.pop()]); ]; /* -- in */
+	
+	/* control */
+	commands["goto"] = #(env) [ env::instruction_pointer = env.pop(); ]; /* to -- */
+	commands["if"] = #(env) [ var to = env.pop(); if (env.pop() != 0) env::instruction_pointer = to; ]; /* cond to -- */
+	
+	/* math */
+	commands["add"] = #(env) [ env.push(env.pop() + env.pop()); ]; /* a b -- a+b */
+	commands["mul"] = #(env) [ env.push(env.pop() * env.pop()); ]; /* a b -- a*b */
+	commands["sub"] = #(env) [ var tmp = env.pop(); env.push(env.pop() - tmp); ]; /* a b -- a-b*/
+	commands["div"] = #(env) [ var tmp = env.pop(); env.push(env.pop() / tmp); ]; /* a b -- a/b */
+	
+	/* logic */
+	commands["eq"] = #(env) [ env.push(iif(env.pop() == env.pop(), 1, 0)); ]; /* a b -- a=b */
+	commands["gt"] = #(env) [ env.push(iif(env.pop() < env.pop(), 1, 0)); ]; /* a b -- a>b */
+	commands["lt"] = #(env) [ env.push(iif(env.pop() > env.pop(), 1, 0)); ]; /* a b -- a<b */
+	commands["and"] = #(env) [ env.push(iif(env.pop() != 0 && env.pop() != 0, 1, 0)); ]; /* a b -- a&b */
+	commands["or"] = #(env) [ env.push(iif(env.pop() != 0 || env.pop() != 0, 1, 0)); ]; /* a b -- a|b */
+	commands["xor"] = #(env) [ env.push(iif((env.pop() != 0) ^ (env.pop() != 0), 1, 0)); ]; /* a b -- a^b */
+	commands["not"] = #(env) [ env.push(iif(env.pop() == 0, 1, 0)); ]; /* a -- !a */
+	
+	/* io */
+	commands["print"] = #(env) [ printf("%i", env.pop()); ]; /* out -- */
+	commands["printc"] = #(env) [ printf("%c", env.pop()); ]; /* out -- */
+	commands["read"] = #(env) [ var tmp = 0; scanf("%i", ref(tmp)); env.push(tmp); ]; /* -- in */
+	commands["readc"] = #(env) [ var tmp = 0; scanf("%c", ref(tmp)); env.push(tmp); ]; /* -- in */
+]
+
+extern sscanf;
+
+@Void interpret(@String code, @Environment env) [
+	var words = lex(code);
+	var wsize = words::size;
+	
+	for (env::instruction_pointer = 0; env::instruction_pointer < wsize; env::instruction_pointer = env::instruction_pointer + 1) {
+		var word = words[env::instruction_pointer];
+		doc printf("\t%s\n%i: %s\n", @String env::stack, env::instruction_pointer, word);
+		var cmd = commands[word];
+		if (null != cmd) cmd(env);
+		else {
+			var i = 0;
+			sscanf(word, "%i", ref(i));
+			env.push(i);
+		}
+	}
+]

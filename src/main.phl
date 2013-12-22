@@ -1,0 +1,36 @@
+module main;
+
+import phl::lang::io;
+import intpr;
+import env;
+
+extern gets;
+
+@Integer main(@Integer argc, @List<@String> argv) [
+	var env = new @Environment;
+
+	if (argc != 2) {
+		printf("usage: %s <file>\n", argv[0]);
+		return 1;
+	}
+	
+	@File file = null;
+	
+	try file = openFile(argv[1], "r");
+	catch (ex) exit(1);
+	
+	var str = "";
+	
+	var x = file.read()&0xFF;
+	while  ( x != 0-1&0xFF )
+	{
+		printf("%l", x);
+		str = str.appendch(x);
+		x = file.read()&0xFF;
+	}
+	file.close();
+	
+	interpret(str, env);
+	
+	return 0;
+]
