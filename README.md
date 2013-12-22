@@ -1,7 +1,7 @@
-sc-pp
+sc-interpreter
 =====
 
-SC Preprocessor
+SC Interpreter
 
 ## Building
 
@@ -39,12 +39,16 @@ sudo apt-get install libgc
 Using script:
 
 ```
-PHLC_FLAGS="--path src" tools/compile.sh src/pp_main.phl sc_pp
+PHLC_FLAGS="--path src" tools/compile.sh src/main.phl sc
 ```
 
 Manually: TODO
 
-## Using SC Preprocessor
+## About SC Language
+
+### Functions
+
+TODO
 
 ### Comments
 
@@ -55,64 +59,27 @@ not_comment ; comment
 not_comment
 ```
 
-### Directives
+### Labels
 
-Following directives are supported:
-
-#### #define
-
-Defines a new macro. Works like in CPP.
-
-Simple macro:
+Labels are prefixed with :. You must add a nop immediately after a label.
 
 ```
-#define NAME BODY
+:label nop
+...
+label goto
 ```
 
-Macro with parameters:
+### Example
 
+Print-function:
 ```
-#define NAME(ARGS) BODY
+:printf nop
+	dup printc
+	0 eq not
+	printf if
+	0 popr
+
+:main nop
+
+"Hello World!" 10 0 printf 12 pushp
 ```
-
-No space can exist between NAME and (.
-
-Preprocessor replaces all occurances of NAME with BODY.
-
-```
-#define PI 3.14
-
-PI*2 ; 3.14*2
-
-#define MAX(x,y) ((x)<(y)?(y):(x))
-
-MAX(a,b) ; ((a)<(b)?(b):(a))
-```
-
-#### #undefine
-
-```
-#undefine NAME
-```
-
-Undefines NAME.
-
-#### #ifdef
-
-```
-#ifdef MACRO
-IF-BLOCK
-#endif
-```
-
-Removes the if-block if macro does not exist.
-
-#### #ifndef
-
-```
-#ifndef MACRO
-IF-BLOCK
-#endif
-```
-
-Removes the if-block if macro does exist.
