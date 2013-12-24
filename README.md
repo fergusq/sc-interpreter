@@ -42,6 +42,11 @@ Using script:
 PHLC_FLAGS="--path src" tools/compile.sh src/main.phl sc
 ```
 
+To compile preprocessor only: (for debug purposes)
+
+PHLC_FLAGS="--path src" tools/compile.sh src/pp_main.phl sc-pp
+```
+
 Manually: TODO
 
 ## About SC Language
@@ -122,4 +127,39 @@ Print-function:
 :main nop
 
 "Hello World!" 10 0 printf 12 pushp
+```
+
+## Preprocessor
+
+SC Interpreter includes a macro preprocessor caller "sc-pp". A derivate of this preprocessor is available for external download
+here: <https://github.com/fergusq/sc-pp>.
+
+Included preprocessor can handle basic directives like #define and #ifdef. #include is not currently supported.
+
+```
+#define PRINT_INT print 10 printc
+2 2 add PRINT_INT
+
+#define SQUARE dup mul
+2 SQUARE  ; 2*2=4
+4 SQUARE  ; 4*4=16
+mul       ; 4*8=64
+PRINT_INT
+
+#define + add
+#define - sub
+#define * mul
+#define / div
+#define : #define
+#define . PRINT_INT
+
+: **. * * .
+
+2 3 4 **.
+
+#define DEBUG
+...
+#ifdef DEBUG
+... ; print debug data
+#endif
 ```
