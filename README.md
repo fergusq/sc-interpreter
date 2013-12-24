@@ -9,15 +9,22 @@ SC Interpreter
 
 To build sc-interpreter, you need phl environment. Using installation script is the recommended way.
 
+### Downloading sources
+
+Cloning git-repository:
+
+```
+$ git clone https://github.com/fergusq/sc-interpreter.git
+```
+
 ### Installing PHL environment
 
 #### Using installation script
 
 ```
-~ $ mkdir phl
-~ $ cd phl
-~/phl $ wget -nv -O installphl.sh http://www.kaivos.org/doc/phl/installphl.sh.all
-~/phl $ bash installphl.sh
+$ cd sc-pp
+sc-pp $ wget -nv -O installphl.sh http://www.kaivos.org/doc/phl/installphl.sh.all
+sc-pp $ bash installphl.sh
 ```
 
 #### Manual download
@@ -93,7 +100,6 @@ print ( out -- ) print a number
 printc ( out -- ) print a character
 read ( -- in ) read a number
 readc ( -- in ) read a character
-]
 ```
 
 ### Comments
