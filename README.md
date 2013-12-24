@@ -44,6 +44,7 @@ PHLC_FLAGS="--path src" tools/compile.sh src/main.phl sc
 
 To compile preprocessor only: (for debug purposes)
 
+```
 PHLC_FLAGS="--path src" tools/compile.sh src/pp_main.phl sc-pp
 ```
 
