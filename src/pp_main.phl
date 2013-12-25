@@ -33,7 +33,7 @@ extern fclose;
 	
 	var str = read_file(argv[1]);
 	
-	lex(str) each #(s) [printf("%s ", s);];
+	preprocess(lex(str)) each #(s) [printf("%s ", s);];
 	printf("\n");
 	
 	return 0;
