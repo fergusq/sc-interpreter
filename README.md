@@ -177,7 +177,7 @@ Print-function:
 
 :main nop
 
-"Hello World!" 10 0 prints 12 pushp po
+"Hello World!" 10 0 prints 12 pushp pop
 ```
 
 ## Preprocessor
