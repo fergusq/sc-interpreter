@@ -90,10 +90,10 @@ logic
 eq ( a b -- a=b )
 gt ( a b -- a>b )
 lt ( a b -- a<b )
-and ( a b -- a&b )
-or ( a b -- a|b )
-xor ( a b -- a^b )
-not ( a -- !a )
+and ( a b -- a&&b ) 0 = false
+or ( a b -- a||b ) 0 = false
+xor ( a b -- a^b ) 0 = false
+not ( a -- !a ) 0 = false
 	
 io
 print ( out -- ) print a number
@@ -121,19 +121,63 @@ Labels are prefixed with :. You must add a nop immediately after a label.
 label goto
 ```
 
+### Strings
+
+Preprocessor replaces strings with character codes.
+
+```
+"HELLO"0
+; Equivalent to:
+72 69 76 76 79 0
+```
+
+### Functions
+
+#### Defining a function
+
+```
+:NAME nop
+	; code
+	VALUE popr
+```
+
+Arguments are pushed to the stack.
+
+popr is like return-keyword in C.
+
+Example, adds 2 to the argument:
+```
+:add2 nop
+	2 add popr
+```
+
+#### Calling functions
+
+```
+ARGUMENTS FUNCTION_NAME ARGUMENT_COUNT pushp
+
+Examples:
+
+3 add2 1 pushp ; calls example function above with argument 3
+
+"Text..."0 processText 8 pushp ; remember all characters are separate arguments + null terminator
+
+1 2 3 4 print_data 4 pushp pop ; pop return value
+```
+
 ### Example
 
 Print-function:
 ```
-:printf nop
-	dup printc
-	0 eq not
-	printf if
-	0 popr
+:prints nop
+	dup printc ; print char
+	0 eq not   ; check if null terminator
+	prints if  ; jump to :prints if not null terminator
+	0 popr     ; otherwise return 0
 
 :main nop
 
-"Hello World!" 10 0 printf 12 pushp
+"Hello World!" 10 0 prints 12 pushp po
 ```
 
 ## Preprocessor
