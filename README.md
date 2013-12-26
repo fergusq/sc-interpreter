@@ -23,8 +23,8 @@ $ git clone https://github.com/fergusq/sc-interpreter.git
 
 ```
 $ cd sc-pp
-sc-pp $ wget -nv -O installphl.sh http://www.kaivos.org/doc/phl/installphl.sh.all
-sc-pp $ bash installphl.sh
+sc-interpreter $ wget -nv -O installphl.sh http://www.kaivos.org/doc/phl/installphl.sh.all
+sc-interpreter $ bash installphl.sh
 ```
 
 #### Manual download
