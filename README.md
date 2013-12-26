@@ -104,7 +104,7 @@ readc ( -- in ) read a character
 
 ### Comments
 
-Comment character is ;. Newline terminates comment.
+Comment character is `;`. Newline terminates comment.
 
 ```
 not_comment ; comment
@@ -113,7 +113,7 @@ not_comment
 
 ### Labels
 
-Labels are prefixed with :. You must add a nop immediately after a label.
+Labels are prefixed with `:`. You must add a nop immediately after a label.
 
 ```
 :label nop
@@ -143,7 +143,7 @@ Preprocessor replaces strings with character codes.
 
 Arguments are pushed to the stack.
 
-popr is like return-keyword in C.
+`popr` is like return-keyword in C.
 
 Example, adds 2 to the argument:
 ```
@@ -155,9 +155,9 @@ Example, adds 2 to the argument:
 
 ```
 ARGUMENTS FUNCTION_NAME ARGUMENT_COUNT pushp
-
+```
 Examples:
-
+```
 3 add2 1 pushp ; calls example function above with argument 3
 
 "Text..."0 processText 8 pushp ; remember all characters are separate arguments + null terminator
@@ -185,7 +185,7 @@ Print-function:
 SC Interpreter includes a macro preprocessor caller "sc-pp". A derivate of this preprocessor is available for external download
 here: <https://github.com/fergusq/sc-pp>.
 
-Included preprocessor can handle basic directives like #define and #ifdef. #include is not currently supported.
+Included preprocessor can handle basic directives like `#define` and `#ifdef`. `#include` is not currently supported.
 
 ```
 #define PRINT_INT print 10 printc
