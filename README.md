@@ -63,12 +63,15 @@ Manually: TODO
 
 ```
 nop ( -- )
+
+stack manipulation
 pop ( a -- )
 dup ( a -- a a )
 dupt ( .. index_a a -- a .. ) moves a number to a position in the stack
 overf ( a .. index_a -- a .. a ) brings a number from a position of the stack
 swap ( a b -- b a )
-	
+
+stack frame manipulation
 pushp ( .. p addr psize -- .. p )( new stack: -- p ) jump to addr, create new stack frame
 popr ( .. r -- ) (old stack: .. -- .. r ) jump back, exit stack frame
 	
@@ -118,7 +121,52 @@ Labels are prefixed with `:`. You must add a nop immediately after a label.
 ```
 :label nop
 ...
-label goto
+label goto ; unconditional jump
+...
+cond label if ; conditional 
+```
+
+### Stack
+
+The stack is the main data structure of the language.
+
+#### Pushing numbers
+
+Every number in the source code is pushed to the stack.
+
+```
+1 2 3 ; pushes three numbers to the stack
+```
+
+#### Manipulating stack
+
+Basic stack manipulation commands are `pop`, `dup` and `swap`. Pop pops the top value of the stack. Dup duplicates the top value. Swap changes places of the two topmost values.
+
+Commands `dupt` (duplicate to) and `overf` (over from) are used for deep stack manipulation. Dupt replaces a value in the stack with the topmost value. It also pops the topmost value.
+Overf copies and pushes a value from the stack.
+
+```
+1 2 3   ; stack: [1 2 3
+dup     ; stack: [1 2 3 3
+1 dupt  ; stack: [1 3 3
+0 overf ; stack: [1 3 3 1
+swap    ; stack: [1 3 1 3
+pop     ; stack: [1 3 1
+```
+
+##### Tip: Variables
+
+Use `dupt` and `overf` to read and write local variables.
+
+```
+0 ; var 1 = 0
+1 ; var 2 = 1
+0 ; var 3 = 0
+
+0 overf ; read var 1
+1 overf ; read var 2
+add     ; var1 + var2
+2 dupt  ; write var 3
 ```
 
 ### Strings
@@ -145,6 +193,22 @@ Arguments are pushed to the stack.
 
 `popr` is like return-keyword in C.
 
+All labels are global, were they inside a function or not. It is recommended to prefix labels with their functions name.
+
+Interpreter does not skip functions but interprets them like any other code segments. You should use goto to jump over functions in code.
+
+```
+; jump over functions
+main goto
+
+:function1 nop ... popr
+:function2 nop ... popr
+
+:main nop
+	; execution continues here
+	...
+```
+
 Example, adds 2 to the argument:
 ```
 :add2 nop
@@ -153,6 +217,7 @@ Example, adds 2 to the argument:
 
 #### Calling functions
 
+Syntax:
 ```
 ARGUMENTS FUNCTION_NAME ARGUMENT_COUNT pushp
 ```
@@ -175,7 +240,7 @@ Print-function:
 	prints if  ; jump to :prints if not null terminator
 	0 popr     ; otherwise return 0
 
-:main nop
+...
 
 "Hello World!" 10 0 prints 12 pushp pop
 ```
