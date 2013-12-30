@@ -3,6 +3,12 @@ module lex;
 import phl::lang::collections;
 import err;
 
+@String fromChar(@Integer char) [
+	@Pointer<@Integer> ptr = @Pointer<@Integer> alloc(ptr_size());
+	ptr:=char;
+	return @String ptr;
+]
+
 /* erota sanat toisistaan */
 @String[] lex(@String code) [
 	var a = new @String[];
@@ -41,6 +47,7 @@ import err;
 			if (currWord::len > 0) a.add(currWord);
 			currWord = "";
 			do { i=i+1; ch = code[i]; } while (ch != '\n');
+			a.add("(NL)");
 		} else {
 			currWord = currWord.appendch(ch);
 		}
