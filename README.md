@@ -265,7 +265,7 @@ Print-function:
 
 ...
 
-"Hello World!" 10 0 prints 12 pushp pop
+"Hello World!" 10 0 prints 14 pushp pop
 ```
 
 ## Preprocessor
