@@ -76,7 +76,7 @@ pushp ( .. p addr psize -- .. p )( new stack: -- p ) jump to addr, create new st
 popr ( .. r -- ) (old stack: .. -- .. r ) jump back, exit stack frame
 	
 memory manipulation
-printm ( out -- ) writes to heap
+printm ( out addr -- ) writes to heap
 readm ( addr -- in ) reads from heap
 	
 control
@@ -167,6 +167,29 @@ Use `dupt` and `overf` to read and write local variables.
 1 overf ; read var 2
 add     ; var1 + var2
 2 dupt  ; write var 3
+```
+
+### Memory
+
+The memory (also called the heap) is a big data structure that contains many *slots* that can store one number.
+
+#### Reading and writing
+
+Memory can be manipulated using commands `readm` and `printm`.
+
+```
+; DATA ADDRESS printm
+; ADDRESS readm
+
+2 0 printm ; store 2 to slot 0
+4 1 printm ; store 4 to slot 1
+8 2 printm ; store 8 to slot 2
+
+0 readm ; read slot 0
+2 readm ; read slot 2
+mul     ; 2+8=10
+1 readm ; read slot 1
+add     ; 10+4=14
 ```
 
 ### Strings
