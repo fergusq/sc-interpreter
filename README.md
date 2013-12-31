@@ -92,7 +92,7 @@ div ( a b -- a/b )
 logic
 eq ( a b -- a=b )
 gt ( a b -- a>b )
-lt ( a b -- a<b )
+lt ( a b -- a&lt;b )
 and ( a b -- a&&b ) 0 = false
 or ( a b -- a||b ) 0 = false
 xor ( a b -- a^b ) 0 = false
@@ -259,8 +259,7 @@ Print-function:
 ```
 :prints nop
 	dup printc ; print char
-	0 eq not   ; check if null terminator
-	prints if  ; jump to :prints if not null terminator
+	prints if  ; jump to :prints if not null terminator ( 0 = terminator and false)
 	0 popr     ; otherwise return 0
 
 ...
@@ -270,7 +269,7 @@ Print-function:
 
 ## Preprocessor
 
-SC Interpreter includes a macro preprocessor caller "sc-pp". A derivate of this preprocessor is available for external download
+SC Interpreter includes a macro preprocessor called "sc-pp". A derivate of this preprocessor is available for external download
 here: <https://github.com/fergusq/sc-pp>.
 
 Included preprocessor can handle basic directives like `#define` and `#ifdef`. `#include` is not currently supported.
@@ -289,10 +288,10 @@ PRINT_INT
 #define - sub
 #define * mul
 #define / div
-#define : #define
+#define def #define
 #define . PRINT_INT
 
-: **. * * .
+def **. * * .
 
 2 3 4 **.
 
@@ -302,3 +301,30 @@ PRINT_INT
 ... ; print debug data
 #endif
 ```
+
+Special built-in macro `__COUNTER` returns a new string every time it is called. It can be used for automatic name generation.
+
+*Note!* Macro arguments are always evaluated lazy. For eager evaluation, surround macro call with `#<` and `#>`.
+
+```
+#define fun(A, B) A A B B
+
+fun(__COUNTER, __COUNTER) ;=> __COUNTER __COUNTER __COUNTER __COUNTER => (1) (2) (3) (4)
+
+#< fun(__COUNTER, __COUNTER) #> ;=> fun((1), (2)) => (1) (1) (2) (2)
+```
+
+The other built-in, `__LEN` returns the number of tokens in the argument. It can be used eg. for calculating string lengths.
+
+```
+:_prints nop
+	dup printc _prints if
+	0 popr
+
+#define prints(str) str _prints __LEN(str) pushp pop
+
+prints("hello world" 10 0) ;=> "hello world" 10 0 _prints 13 pushp pop
+```
+
+File `examples/preprocessor_example.sc_souruce` contais many examples of both *__COUNTER* and *__LEN*. Note that the file is only
+showing features of the preprocessor, not being the recommended style to write code. Macros should not be used everywhere in the code.

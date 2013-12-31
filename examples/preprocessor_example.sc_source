@@ -4,10 +4,18 @@
 #define FUN(name) :name nop
 #define RETURN(x) x popr
 #define CALL_0(fun) fun 0 pushp
+; Preprocessor example in SC Language
+
+; function + goto
+#define FUN(name) :name nop
+#define RETURN(x) x popr
+#define CALL_0(fun) fun 0 pushp
 #define CALL_1(fun, arg) arg fun 1 pushp
 
 #define GOTO(to) to goto
 #define GOIF(cond, to) cond to if
+
+; while-loop eg. LOOP(VAR(x), DEC(x) PRINTV(x)) print x and decrease until it is zero
 #define _LOOP(start, end, while, body) :start nop GOIF(while not, end) body GOTO(start) :end nop
 #define LOOP(while, body) #< _LOOP(__COUNTER, __COUNTER, while, body) #> ; #< #> used to evaluate macro arguments eagerly
 
@@ -28,7 +36,6 @@
 #define * mul
 #define / div
 #define = eq
-#define /= neq
 #define < lt
 #define > gt
 
@@ -36,7 +43,9 @@
 #define le gt not
 #define <= gt not
 #define ge lt not
+#define neq eq not
 #define >= lt not
+#define /= eq not
 
 ; io
 #define PRINT(num) num print
@@ -48,12 +57,14 @@
 
 TOMAIN
 
+; prints function
 #define prints(str) str __prints __LEN(str) pushp
 FUN(__prints)
     GOIF(dup printc, __prints) ; jump to :__prints if not null terminator
     RETURN(0)
 
-#define fib(p1) CALL_1(__fib, p1);
+; fibonacci sequence printer
+#define fib(p1) CALL_1(__fib, p1)
 FUN(__fib)
 	; params
 	PAR(p1,0)
