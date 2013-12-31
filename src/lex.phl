@@ -73,7 +73,7 @@ class @PPMacro {
 	
 	@String[] eval(@String[][] args) [
 		if (null != this::params && null != args) {
-			if (args::size != this::params::size) err("wrong number of macro parameters");
+			if (args::size != this::params::size) err("?: wrong number of macro parameters");
 			
 			var tmp = macros;
 			macros = new @PPScope.init(null);
@@ -115,6 +115,22 @@ class @CounterMacro : @PPMacro {
 	]
 };
 
+class @LenMacro : @PPMacro {
+	
+	new [
+		this::params = new @String[].."p#str";
+	]
+	
+	@String[] eval(@String[][] args) [
+		if (null == args) err("len: wrong number of macro parameters");
+		return new @String[]..""+args[0]::size;
+	]
+	
+	auto @String [
+		return "[LEN]";
+	]
+};
+
 struct @PPScope {
 	field @PPScope super_;
 	field @Hashtable<@PPMacro> macros;
@@ -140,6 +156,7 @@ static @PPScope macros;
 	if (null == macros) {
 		macros = new @PPScope.init(null);
 		macros::macros["__COUNTER"] = (new @CounterMacro);
+		macros::macros["__LEN"] = (new @LenMacro);
 	}
 	
 	var asize = a::size;

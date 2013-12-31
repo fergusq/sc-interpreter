@@ -15,7 +15,8 @@
 #define TOMAIN GOTO(main)
 
 ; variables
-#define NEW(val) val ; crazy?
+#define PAR(name, index) #define name index
+#define NEW(name, index, val) val #define name index
 #define VAR(var) var overf
 #define SET(var, val) val var dupt
 #define MOV(var1, var2) var2 overf var1 dupt
@@ -38,7 +39,8 @@
 #define >= lt not
 
 ; io
-#define PRINT(num) num print 10 printc
+#define PRINT(num) num print
+#define PRINTC(chr) chr printc
 #define PRINTV(var) PRINT(VAR(var))
 
 ; for fun
@@ -46,17 +48,32 @@
 
 TOMAIN
 
-FUN(fib)
-	;var0   var1   var2   var3
-	NEW(0) NEW(1) NEW(0) NEW(0)
-	LOOP(_(VAR(3), <, 10),
-		SET(2, VAR(0)VAR(1)+)
-		MOV(0, 1)
-		MOV(1, 2)
-		INC(3)
-		PRINTV(0)
+#define prints(str) str __prints __LEN(str) pushp
+FUN(__prints)
+    GOIF(dup printc, __prints) ; jump to :__prints if not null terminator
+    RETURN(0)
+
+#define fib(p1) CALL_1(__fib, p1);
+FUN(__fib)
+	; params
+	PAR(p1,0)
+	; vars
+	NEW(a,1, 0)
+	NEW(b,2, 1)
+	NEW(c,3, 0)
+	NEW(i,4, 0)
+	LOOP(_(VAR(i), <, VAR(p1)),
+		SET(c, VAR(a)VAR(b)+)
+		MOV(a, b)
+		MOV(b, c)
+		INC(i)
+		PRINTV(i)
+		prints(": "0)
+		PRINTV(a)
+		PRINTC(10)
 	)
 	RETURN(0)
 
 MAIN
-	PRINT(CALL_0(fib))
+	prints("Fibonacci sequence: " 10 0)
+	PRINT(fib(10)) PRINTC(10)
