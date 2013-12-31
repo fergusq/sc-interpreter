@@ -7,8 +7,9 @@
 
 #define GOTO(to) to goto
 #define GOIF(cond, to) cond to if
-#define LOOP(start, end, while, body) GOIF(while not, end) body GOTO(start)
+#define LOOP(start, end, while, body) :start nop GOIF(while not, end) body GOTO(start) :end nop
 
+#define MAIN :main nop
 #define TOMAIN GOTO(main)
 
 ; variables
@@ -46,7 +47,6 @@ TOMAIN
 :fib nop
 	;var0   var1   var2   var3
 	NEW(0) NEW(1) NEW(0) NEW(0)
-	:loop_start nop
 	LOOP(loop_start, loop_end, _(VAR(3), <, 10),
 		SET(2, VAR(0)VAR(1)+)
 		MOV(0, 1)
@@ -54,8 +54,7 @@ TOMAIN
 		INC(3)
 		PRINTV(0)
 	)
-	:loop_end nop
 	RETURN(0)
 
-:main nop
+MAIN
 	CALL_0(fib)
