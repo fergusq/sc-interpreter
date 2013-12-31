@@ -107,7 +107,7 @@ class @CounterMacro : @PPMacro {
 	
 	@String[] eval(@String[][] args) [
 		this::counter = this::counter + 1;
-		return new @String[].."["+this::counter+"]";
+		return new @String[].."("+this::counter+")";
 	]
 	
 	auto @String [
