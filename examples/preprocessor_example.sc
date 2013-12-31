@@ -8,7 +8,8 @@
 
 #define GOTO(to) to goto
 #define GOIF(cond, to) cond to if
-#define LOOP(start, end, while, body) :start nop GOIF(while not, end) body GOTO(start) :end nop
+#define _LOOP(start, end, while, body) :start nop GOIF(while not, end) body GOTO(start) :end nop
+#define LOOP(while, body) #< _LOOP(__COUNTER, __COUNTER, while, body) #> ; #< #> used to evaluate macro arguments eagerly
 
 #define MAIN :main nop
 #define TOMAIN GOTO(main)
@@ -48,7 +49,7 @@ TOMAIN
 FUN(fib)
 	;var0   var1   var2   var3
 	NEW(0) NEW(1) NEW(0) NEW(0)
-	LOOP(loop_start, loop_end, _(VAR(3), <, 10),
+	LOOP(_(VAR(3), <, 10),
 		SET(2, VAR(0)VAR(1)+)
 		MOV(0, 1)
 		MOV(1, 2)
@@ -58,4 +59,4 @@ FUN(fib)
 	RETURN(0)
 
 MAIN
-	CALL_0(fib)
+	PRINT(CALL_0(fib))

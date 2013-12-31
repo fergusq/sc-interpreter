@@ -61,7 +61,7 @@ import err;
 
 /* Yksinkertainen esikääntäjä */
 
-struct @PPMacro {
+class @PPMacro {
 	field @String[] params;
 	field @String[] body;
 	
@@ -72,7 +72,7 @@ struct @PPMacro {
 	]
 	
 	@String[] eval(@String[][] args) [
-		if (null != this::params) {
+		if (null != this::params && null != args) {
 			if (args::size != this::params::size) err("wrong number of macro parameters");
 			
 			var tmp = macros;
@@ -94,6 +94,24 @@ struct @PPMacro {
 		if (null != params())
 			return "" + params() + "" + body();
 		else return "[]" + body();
+	]
+};
+
+class @CounterMacro : @PPMacro {
+
+	field @Integer counter;
+	
+	new [
+		this::counter = 0;
+	]
+	
+	@String[] eval(@String[][] args) [
+		this::counter = this::counter + 1;
+		return new @String[].."["+this::counter+"]";
+	]
+	
+	auto @String [
+		return "[COUNTER:"+this::counter+"]";
 	]
 };
 
@@ -119,14 +137,17 @@ struct @PPScope {
 static @PPScope macros;
 
 @String[] preprocess(@String[] a) [
-	if (null == macros) macros = new @PPScope.init(null);
+	if (null == macros) {
+		macros = new @PPScope.init(null);
+		macros::macros["__COUNTER"] = (new @CounterMacro);
+	}
 	
 	var asize = a::size;
 	
 	var print = true; var ifdepth = 0;
+	var istack = new @Integer[];
 	
 	for (var i = 0; i < asize; i=i+1) {
-		doc printf("%s\n", @String a);
 		if (print::n) {
 			if (i+1 >= asize) err("directive syntax error");
 			if (a[i] == "#" && a[i+1] == "ifdef" || a[i+1] == "ifndef") {
@@ -192,10 +213,15 @@ static @PPScope macros;
 				ifdepth = 1;
 			}
 			else if (directive == "endif") {
-				if (i == asize-2) err("directive:ifndef syntax error");
-				var macro_name = a.remove(i);
-				if (macros::macros[macro_name] != null) print = false;
+				print = false;
 				ifdepth = 0;
+			}
+			else if (directive == "<") {
+				istack.add(i);
+				i = i + 2;
+			}
+			else if (directive == ">") {
+				i = istack.remove(-(1));
 			}
 			else err("unknown directive '" + directive + "'");
 			i = i - 1;
@@ -206,6 +232,7 @@ static @PPScope macros;
 			var macro_body = new @String[];
 			macro_body.add(""+i);
 			macros::macros[macro_name] = new @PPMacro.init(null, macro_body);
+			doc printf("+%s:%i\n%s\n", macro_name, i, @String a);
 			i = i - 1;
 			asize = a::size;
 		} else if (a[i] == "(NL)") {
@@ -252,44 +279,59 @@ static @PPScope macros;
 			}
 		}
 	}
-	for (var i = 0; i < asize; i=i+1) {
-		var macro = macros.getMacro(a[i]);
-		if (null != macro) {
-			a.remove(i);
-			if (i < asize-1) {
-				if (a[i] == "(" && null != macro::params) {
+	var macro_existed = false;
+	do {
+		macro_existed = false;
+		for (var i = 0; i < asize; i=i+1) {
+			if (a[i] == ":") {
+				a.remove(i);
+				var macro_name = a.remove(i);
+				var macro_body = new @String[];
+				macro_body.add(""+i);
+				macros::macros[macro_name] = new @PPMacro.init(null, macro_body);
+				i = i - 1;
+				asize = a::size;
+			} else {
+				var macro = macros.getMacro(a[i]);
+				if (null != macro) {
+					macro_existed = true;
 					a.remove(i);
-					var macro_args = new @String[][];
-					
-					if (i == asize-2) err("macro syntax error");
-					while (true) {
-						var arg = new @String[];
-						macro_args.add(arg);
-						var depth = 0;
-						if (i == a::size) err("macro syntax error");
-						while (((a[i] == "," || a[i] == ")") && depth <= 0)::n) {
-							var c = a[i];
-							if (c == "(") depth = depth + 1;
-							else if (c == ")") depth = depth - 1;
+					if (i < asize-1) {
+						if (a[i] == "(" && null != macro::params) {
 							a.remove(i);
-							if (i == a::size) err("macro syntax error");
-							arg.add(c);
-						}
+							var macro_args = new @String[][];
 					
-						if (a.remove(i) == ")") break;
+							if (i == asize-2) err("macro syntax error");
+							while (true) {
+								var arg = new @String[];
+								macro_args.add(arg);
+								var depth = 0;
+								if (i == a::size) err("macro syntax error");
+								while (((a[i] == "," || a[i] == ")") && depth <= 0)::n) {
+									var c = a[i];
+									if (c == "(") depth = depth + 1;
+									else if (c == ")") depth = depth - 1;
+									a.remove(i);
+									if (i == a::size) err("macro syntax error");
+									arg.add(c);
+								}
+					
+								if (a.remove(i) == ")") break;
+							}
+							a.insertAll(i, macro.eval(macro_args));
+						} else {
+							a.insertAll(i, macro.eval(null));
+						}
 					}
-					a.insertAll(i, macro.eval(macro_args));
-				} else {
-					a.insertAll(i, macro.eval(null));
+					else {
+						a.insertAll(i, macro.eval(null));
+					}
+					i = i - 1;
+					asize = a::size;
 				}
 			}
-			else {
-				a.insertAll(i, macro.eval(null));
-			}
-			i = i - 1;
-			asize = a::size;
 		}
-	}
+	} while (macro_existed);
 	return a;
 ]
 
