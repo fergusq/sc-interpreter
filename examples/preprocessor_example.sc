@@ -1,6 +1,7 @@
 ; Preprocessor example in SC Language
 
 ; function + goto
+#define FUN(name) :name nop
 #define RETURN(x) x popr
 #define CALL_0(fun) fun 0 pushp
 #define CALL_1(fun, arg) arg fun 1 pushp
@@ -44,7 +45,7 @@
 
 TOMAIN
 
-:fib nop
+FUN(fib)
 	;var0   var1   var2   var3
 	NEW(0) NEW(1) NEW(0) NEW(0)
 	LOOP(loop_start, loop_end, _(VAR(3), <, 10),
