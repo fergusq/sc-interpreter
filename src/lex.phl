@@ -25,7 +25,7 @@ import err;
 		} else if (ch == '#' || ch == ':' || ch == ',' || ch == '(' || ch == ')') {
 			if (currWord::len > 0) a.add(currWord);
 			currWord = "";
-			a.add("".appendch(ch));
+			a.add(fromChar(ch));
 		} else if (ch == '\n') {
 			if (currWord::len > 0) a.add(currWord);
 			currWord = "";
@@ -42,7 +42,8 @@ import err;
 			if (currWord::len > 0) a.add(currWord);
 			currWord = "";
 			i = i + 1;
-			a.add("".appendch(code[i]));
+			/* alla oleva ei palvele tarkoitusta, ehkä jotain\ jotain olisi yksi tokeni? */
+			doc a.add(fromChar(code[i]));
 		} else if (ch == ';') {
 			if (currWord::len > 0) a.add(currWord);
 			currWord = "";
