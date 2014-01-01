@@ -1,11 +1,12 @@
 ; Preprocessor example in SC Language
 
 ; function + goto
-#define _FUN(name, _name, params) :_name nop #define name params _name __LEN(params) pushp
+#define _FUN(name, _name, params) :_name nop #define name(args) args _name __LEN(params) pushp
 #define FUN(name, params) #< _FUN(name, __COUNTER, params) #>
 #define RETURN(x) x popr
 #define CALL_0(fun) fun 0 pushp
 #define CALL_1(fun, arg) arg fun 1 pushp
+#define CALL(fun, argc, argv) argv fun argc pushp
 
 #define GOTO(to) to goto
 #define GOIF(cond, to) cond to if
@@ -14,6 +15,10 @@
 ; while-loop eg. LOOP(VAR(x), DEC(x) PRINTV(x)) print x and decrease until it is zero
 #define _LOOP(start, end, while, body) :start nop GOIF(while not, end) body GOTO(start) :end nop
 #define LOOP(while, body) #< _LOOP(__COUNTER, __COUNTER, while, body) #> ; #< #> used to evaluate macro arguments eagerly
+
+; if eg. IF(VAR(a)VAR(b)=, PRINTS("eq"), PRINTS("neq")) print eq if equal otherwise neq
+#define _IF(else, end, cond, body, elsebody) :start nop GOIF(cond not, else) body GOTO(end) :else not elsebody :end nop
+#define IF(cond, body, elsebody) #< _IF(__COUNTER, __COUNTER, cond, body, elsebody) #> ; #< #> used to evaluate macro arguments eagerly
 
 #define MAIN :main nop
 #define TOMAIN GOTO(main)
@@ -35,12 +40,20 @@
 #define < lt
 #define > gt
 
+#define & and
+#define | or
+#define ^ xor
+
+#define . pop
+#define ! dup
+#define ? swap
+
 ; additional commands
 #define le gt not
 #define <= gt not
 #define ge lt not
-#define neq eq not
 #define >= lt not
+#define neq eq not
 #define /= eq not
 
 ; io
@@ -54,7 +67,7 @@
 TOMAIN
 
 ; prints function
-#define prints(str) str __prints __LEN(str) pushp
+#define prints(str) str __prints __LEN(str) pushp pop
 L(__prints)
     GOIF(dup printc, __prints) ; jump to :__prints if not null terminator
     RETURN(0)
@@ -83,3 +96,6 @@ FUN(fib, p1)
 MAIN
 	prints("Fibonacci sequence: " 10 0)
 	PRINT(fib(10)) PRINTC(10)
+	
+	IF(1, prints("ok"10 0), prints("err"10 0))
+	IF(0, prints("err"10 0), prints("ok"10 0))

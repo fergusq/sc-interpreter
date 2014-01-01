@@ -326,5 +326,5 @@ The other built-in, `__LEN` returns the number of tokens in the argument. It can
 prints("hello world" 10 0) ;=> "hello world" 10 0 _prints 13 pushp pop
 ```
 
-File `examples/preprocessor_example.sc_souruce` contais many examples of both *__COUNTER* and *__LEN*. Note that the file is only
+File `examples/preprocessor_example.sc_source` contais many examples of both *__COUNTER* and *__LEN*. Note that the file is only
 showing features of the preprocessor, not being the recommended style to write code. Macros should not be used everywhere in the code.
