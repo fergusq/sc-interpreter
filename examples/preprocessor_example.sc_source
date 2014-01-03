@@ -66,7 +66,7 @@
 
 TOMAIN
 
-; prints function
+; printstring function, macro uses __LEN to calculate argument count (string length)
 #define prints(str) str __prints __LEN(str) pushp pop
 L(__prints)
     GOIF(dup printc, __prints) ; jump to :__prints if not null terminator
