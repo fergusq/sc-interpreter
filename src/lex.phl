@@ -1,6 +1,7 @@
 module lex;
 
 import phl::lang::collections;
+import files;
 import err;
 
 @String fromChar(@Integer char) [
@@ -33,11 +34,14 @@ import err;
 		} else if (ch == '"') { /* '"' */
 			if (currWord::len > 0) a.add(currWord); currWord = "";
 			
+			var str = "\"";
+			
 			i = i + 1;
 			while (code[i] != '"') /* '"' */ {
-				a.add(@String code[i]);
+				str = str.appendch(code[i]);
 				i = i + 1;
 			}
+			a.add(str + "\"");
 		} else if (ch == '\\') {
 			if (currWord::len > 0) a.add(currWord);
 			currWord = "";
@@ -233,6 +237,14 @@ static @PPScope macros;
 			else if (directive == "endif") {
 				print = false;
 				ifdepth = 0;
+			}
+			else if (directive == "include") {
+				var file = a.remove(i);
+				if (file[0] == '"') {
+					file = file::copy.substring(1);
+					(@Pointer<@Integer> file)[file::len-1] = 0;
+				}
+				a.insertAll(i, lex(read_file(file)));
 			}
 			else if (directive == "<") {
 				istack.add(i);

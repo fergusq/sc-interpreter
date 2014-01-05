@@ -1,0 +1,4 @@
+; printstring function, macro uses __LEN to calculate argument count (string length)
+#define prints(str) str __prints __LEN(str) pushp pop
+:__prints nop
+	dup printc __prints if 0 popr

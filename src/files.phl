@@ -1,6 +1,7 @@
 module files;
 
 import phl::lang::io;
+import err;
 
 extern fopen;
 extern fseek;
@@ -13,6 +14,7 @@ extern fclose;
 	@String s = null;
 	@Integer size = null;
 	@File file = @File fopen(file_name, "rb");
+	if (null == file) err("File not found: " + file_name);
 	fseek(file, 0, 2);
 	size = @Integer ftell(file);
 	rewind(file);
