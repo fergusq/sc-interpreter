@@ -7,11 +7,12 @@ main goto
     prints1 if ; jump to :prints if not null terminator (0 = false and null terminator)
     0 popr     ; otherwise return 0
 
+; library
+#include "examples/prints.sc_source"
+
 :main nop
 
 "Hello World!" 10 0 prints1 14 pushp pop
 
 ; using macro in library
-#include "examples/prints.sc_source"
-
 prints("Hello World!"10 0)

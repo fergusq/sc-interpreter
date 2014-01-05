@@ -161,8 +161,9 @@ static @PPScope macros;
 	if (null == macros) {
 		macros = new @PPScope.init(null);
 		macros::macros["__COUNTER"] = (new @CounterMacro);
-		macros::macros["__LEN"] = (new @LenMacro);
 	}
+	
+	macros::macros["__LEN"] = null;
 	
 	var asize = a::size;
 	
@@ -265,6 +266,17 @@ static @PPScope macros;
 			doc printf("+%s:%i\n%s\n", macro_name, i, @String a);
 			i = i - 1;
 			asize = a::size;
+		} else if (a[i][0] == '"') {
+			var str = a.remove(i);
+			var j = 1;
+			var len = str::len;
+			while (j < len-1) {
+				a.insert(i+j-1, @String str[j]);
+				j = j + 1;
+			}
+			
+			i = i - 1;
+			asize = a::size;
 		} else if (a[i] == "(NL)") {
 			a.remove(i);
 			i = i - 1;
@@ -309,6 +321,9 @@ static @PPScope macros;
 			}
 		}
 	}
+	
+	macros::macros["__LEN"] = (new @LenMacro);
+	
 	var macro_existed = false;
 	do {
 		macro_existed = false;
