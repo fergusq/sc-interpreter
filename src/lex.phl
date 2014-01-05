@@ -257,15 +257,6 @@ static @PPScope macros;
 			else err("unknown directive '" + directive + "'");
 			i = i - 1;
 			asize = a::size;
-		} else if (a[i] == ":") {
-			a.remove(i);
-			var macro_name = a.remove(i);
-			var macro_body = new @String[];
-			macro_body.add(""+i);
-			macros::macros[macro_name] = new @PPMacro.init(null, macro_body);
-			doc printf("+%s:%i\n%s\n", macro_name, i, @String a);
-			i = i - 1;
-			asize = a::size;
 		} else if (a[i][0] == '"') {
 			var str = a.remove(i);
 			var j = 1;
