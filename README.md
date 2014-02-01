@@ -272,7 +272,7 @@ Print-function:
 SC Interpreter includes a macro preprocessor called "sc-pp". A derivate of this preprocessor is available for external download
 here: <https://github.com/fergusq/sc-pp>.
 
-Included preprocessor can handle basic directives like `#define` and `#ifdef`. `#include` is not currently supported.
+Included preprocessor can handle basic directives like `#define` and `#ifdef`.
 
 ```
 #define PRINT_INT print 10 printc
